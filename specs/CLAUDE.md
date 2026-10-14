@@ -12,6 +12,7 @@ https://github.com/openostler/ostler/tree/main/specs.
   injection. Archived: moved out of scope (a separate ESP32 project).
 - `2026-10-04-dtc-coverage-design.md` — filling the fault-meaning store from forum lists, with confidence.
 - `2026-10-04-fault-screen-import-design.md` — pairing labelled NanoCom fault screens with raw fault frames (T-30).
+- `2026-10-14-instrument-pack-replacement-design.md` — plan (draft): Ostler as the D2 cluster via a read-only tap harness, pack kept hidden.
 - `2026-10-04-reply-length-layouts-design.md` — store records restricted to one reply length (Td5 `21 1B` short/long).
 
 ## Editing rules
