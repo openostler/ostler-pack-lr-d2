@@ -1,33 +1,31 @@
 ---
-title: "Instrument pack replacement: Ostler as the D2 cluster — plan"
-area: specs
-status: draft
-version: 0.1
+title: "Instrument pack: getting its data into Ostler, then a screen in its place — research plan"
+area: references
+status: stable
+version: 1.0
 updated: 2026-10-14
 depends_on: [references/research/instrument-pack/wiring.md, references/research/instrument-pack/data-sources.md, references/research/instrument-pack/ostler-fit.md, references/protocol_state_handoff.md]
 summary: >
-  Plan, for the owner's review, to show the Discovery 2 Td5 instrument pack's data in Ostler and then
-  replace the pack's display. It covers rpm, road speed, fuel, coolant and every tell-tale. Signals come
-  from a read-only tap harness on the pack's two plugs (C0230 and C0233) into an ESP32-S3 input node:
-  frequency capture for tach and speed, PWM for coolant, a differential fuel sender, opto lamp senses,
-  and a receive-only tap of the SK body bus. The Td5 ECM over K-line adds extra engine values. The
-  original pack stays connected but hidden, because it holds the odometer, the chimes, the BCU's road
-  speed and the lamp loads the ECUs monitor. Four stages: augment, Ostler cluster, replace the display,
-  and full removal (not recommended). Also covers the legal limits, the platform ADRs this needs, car
-  tests and open decisions.
+  Research only, no decisions. The owner's aim (2026-10-14): first get the D2 Td5 instrument pack's data
+  into Ostler, and eventually replace the pack with a screen. Shows the route the research points to: a
+  read-only Y-harness tap on C0230/C0233 into an ESP32-S3 input node (pulse, PWM, differential fuel
+  sender, lamp opto senses, receive-only SK bus), the Td5 over K-line for extra values, and the
+  original pack kept connected but hidden. It sets out stages, the legal and platform constraints, where
+  each piece would live, and the car tests that would close the gaps. Points for later are listed as
+  open questions, not decisions.
 ---
 
-# Instrument pack replacement: Ostler as the D2 cluster — plan
+# Instrument pack: getting its data into Ostler, then a screen in its place
 
-**Status: draft, for the owner's review** (asked for on 2026-10-14: "come up with a plan of how we
-could replace it, but getting our data as inputs to ostler").
+**Research only; nothing here is decided.** The owner's aim (2026-10-14): first get the pack's data into
+Ostler, and eventually replace the pack with a screen. A design spec comes later, when that work starts.
 
 **Evidence:** the three research notes in
-[references/research/instrument-pack/](../references/research/instrument-pack/):
+[this folder](.):
 
-- [wiring.md](../references/research/instrument-pack/wiring.md): pinouts and lamp drivers;
-- [data-sources.md](../references/research/instrument-pack/data-sources.md): K-line vs taps, and the law;
-- [ostler-fit.md](../references/research/instrument-pack/ostler-fit.md): the platform's pieces and gaps.
+- [wiring.md](wiring.md): pinouts and lamp drivers;
+- [data-sources.md](data-sources.md): K-line vs taps, and the law;
+- [ostler-fit.md](ostler-fit.md): the platform's pieces and gaps.
 
 Facts below carry those notes' confidence marks. Anything marked *inferred* is a car test, not a design input.
 
@@ -126,7 +124,7 @@ with an input board.
   The firmware never transmits on it.
 - **Supplies:** fed from C0230-19 (ignition) and -20 (permanent), with its own fuse. A sense on
   C0230-12 for illumination.
-- **Link to the Brain:** a wire (10BASE-T1S or USB-NCM), not Wi-Fi, for the tell-tales. This is open decision D4.
+- **Link to the Brain:** a wire (10BASE-T1S or USB-NCM), not Wi-Fi, for the tell-tales. This is open question Q3.
 - **Boot:** the node must publish tell-tales **within 1 s of ignition-on**, so the ECUs' 3 s bulb
   checks are visible on screen.
 
@@ -189,7 +187,7 @@ Removing the pack means:
 - carrying the odometer, which can't be reset and has to stay in step with the BCU's copy.
 
 All of these are outputs to the car, which the constitution forbids without ADRs. The odometer is a
-legal record. The plan stops at Stage C unless the owner decides otherwise.
+legal record. The research stops at Stage C.
 
 ## 6. What belongs where
 
@@ -203,7 +201,7 @@ legal record. The plan stops at Stage C unless the owner decides otherwise.
 
 ## 7. Car tests
 
-These go into `references/test_plan.md` when approved.
+Candidates for `references/test_plan.md` when the work starts.
 
 | ID | Test |
 |---|---|
@@ -216,15 +214,17 @@ These go into `references/test_plan.md` when approved.
 | T-IP-7 | Alternator excitation: does C0230-11 carry the field current? Measure the current with the pack in place |
 | T-IP-8 | Y-harness fitted: drive cycle, then read Td5, SRS, EAT and SLABS faults to confirm no new faults |
 
-## 8. Open decisions for the owner
+## 8. Open questions for later (not decisions)
 
-- **D1 — final goal.** Is the goal Stage C (Ostler screen in the pack aperture, pack hidden) or Stage A/B only (Ostler alongside the stock pack)?
-- **D2 — Stage C safety path.** How should the independent speed/tell-tale display be built: an LED strip, a small TFT driven by the node, or a second small screen?
-- **D3 — pack and harness location.** Where should the original pack and the Y harness go: behind the dash, or in the glovebox via an extension?
-- **D4 — tell-tale link.** Tell-tales over a wire only, with no Wi-Fi? Recommended: yes.
-- **D5 — SK bus decoding.** Accept receive-only SK bus decoding as in scope for this pack?
-- **D6 — symbols.** R121 symbols and colours for the tell-tales, or the D2's own symbols?
+The aim is set: data first (Stages A and B), then a screen in the pack's place (Stage C). These are
+for when the design work starts.
+
+- **Q1 — backup display.** What form the independent speed and tell-tale path takes in Stage C: LEDs, a small TFT on the node, or a second small screen.
+- **Q2 — where the pack goes.** Where the hidden original pack and the Y harness live: behind the dash, or in the glovebox on an extension.
+- **Q3 — tell-tale link.** Whether tell-tales travel only over a wire, never Wi-Fi. The research points to wired only.
+- **Q4 — SK bus.** Whether decoding the SK body bus, receive-only, is in this pack's scope.
+- **Q5 — symbols.** R121 symbols and colours for the tell-tales, or the D2's own.
 
 ## Changelog
 
-- 2026-10-14 — v0.1, draft: first plan, from three research notes (wiring, data sources and law, Ostler fit).
+- 2026-10-14 — v1.0: research plan from three research notes (wiring, data sources and law, Ostler fit). Moved from `specs/` as research, not a design for approval (owner, 2026-10-14).
